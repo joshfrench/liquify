@@ -18,6 +18,7 @@ class LiquifyExtension < Radiant::Extension
 
   def activate
     Page.send :include, Liquify::PageExtensions
+    require 'liquify/tags'
   end
   
   def deactivate
