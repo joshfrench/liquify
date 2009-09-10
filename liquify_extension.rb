@@ -12,8 +12,12 @@ class LiquifyExtension < Radiant::Extension
   #   end
   # end
   
+  extension_config do |config|
+    config.gem 'liquid'
+  end
+
   def activate
-    # admin.tabs.add "Liquify", "/admin/liquify", :after => "Layouts", :visibility => [:all]
+    Page.send :include, Liquify::PageExtensions
   end
   
   def deactivate
