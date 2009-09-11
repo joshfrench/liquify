@@ -6,6 +6,7 @@ module Liquify
     end
 
     def [](part)
+      @context['part_name'] = part if @context
       if part = @page.part(part)
         part.content
       end
@@ -16,7 +17,7 @@ module Liquify
 
   class PageDrop < Liquid::Drop
     attr_accessor :page
-    delegate :title, :slug, :breadcrumb, :to => :page
+    delegate :title, :slug, :breadcrumb, :parent, :to => :page
 
     def initialize(page)
       @page = page
@@ -31,5 +32,6 @@ module Liquify
     def parts
       PartDrop.new(@page)
     end
+
   end
 end
