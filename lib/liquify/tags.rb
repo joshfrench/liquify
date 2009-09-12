@@ -3,11 +3,15 @@ module Liquify
     attr_accessor :snippet
 
     def initialize(tag_name, snippet_name, tokens)
-      @snippet = Snippet.find_by_name(snippet_name.strip)
+      @tag_name = tag_name
+      @snippet = snippet_name.strip
+      parse(tokens)
     end
 
     def render(context)
-      Liquid::Template.parse(@snippet.content).render(context)
+      source  = Liquid::Template.file_system.read_template_file(@snippet, Snippet)
+      partial = Liquid::Template.parse(source)
+      partial.render(context)
     end
 
   end
