@@ -33,5 +33,9 @@ module Liquify
       PartDrop.new(@page)
     end
 
+    def date
+      @page.published_at || @page.created_at
+    end
+
   end
 end
