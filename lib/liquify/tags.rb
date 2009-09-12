@@ -23,4 +23,15 @@ module Liquify
     end
   end
   Liquid::Template.register_tag('lorem', LoremTag)
+  
+  class CurrentTimeTag < Liquid::Tag
+    def render(context)
+      if @markup.empty?
+        Time.now
+      else
+        Time.now.strftime(@markup.strip)
+      end
+    end
+  end
+  Liquid::Template.register_tag('current_time', CurrentTimeTag)
 end
