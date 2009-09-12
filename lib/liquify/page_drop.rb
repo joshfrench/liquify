@@ -8,7 +8,7 @@ module Liquify
     def [](part)
       @context['part_name'] = part if @context
       if part = @page.part(part)
-        part.content
+        Liquid::Template.parse(part.content).render(@context)
       end
     end
 
