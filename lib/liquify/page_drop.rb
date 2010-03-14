@@ -26,7 +26,7 @@ module Liquify
 
   class PageDrop < Liquid::Drop
     attr_accessor :page
-    delegate :title, :slug, :breadcrumb, :parent, :children, :to => :page
+    delegate :title, :slug, :breadcrumb, :parent, :to => :page
 
     def initialize(page)
       @page = page
@@ -50,10 +50,42 @@ module Liquify
       relative_url_for(@page.url, @context['request'])
     end
     
+    def children
+      ChildrenDrop.new(@page.children)
+    end
+    
     private
       def relative_url_for(url, request)
         File.join(ActionController::Base.relative_url_root || '', url)
       end
 
   end
+
+  class ChildrenDrop < Liquid::Drop
+    attr_accessor :children
+    include Enumerable
+
+    def initialize(children)
+      @children = children
+    end
+    
+    # shazam!
+    def each(&block)
+      @children.each &block
+    end
+
+    def before_method(name)
+      unless name == 'all'
+        stat = Status[name]
+        unless stat.nil?
+          return @children.physical.send(stat.name.underscore)
+        else
+          super
+        end
+      else
+        return @children.physical
+      end
+    end
+  end
+
 end

@@ -70,5 +70,18 @@ describe "Standard Tags" do
     pages(:childless).should render('{% unless page.children any %}true{% endunless %}').as('true')
   end
 
+  describe "{% for child in page.children %}" do
+    it "should iterate through the children of the current page" do
+      pages(:parent).should render("{% for page in page.children %}{% title %} {% endfor %}").as('Child Child 2 Child 3 ')
+    end
+
+    it "should retain access to parent page while iterating" do
+      pages(:parent).should render('{% for child in page.children %}{{ page.slug }}/{{ child.slug }} {% endfor %}').as('parent/child parent/child-2 parent/child-3 ')
+    end
+
+    it "should not list draft pages" do
+      pages(:assorted).should render('{% for child in page.children.published %}{{ child.slug }} {% endfor %}').as('a b c d e f g h i j ')
+    end
+  end
 
 end
