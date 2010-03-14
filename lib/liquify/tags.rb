@@ -53,7 +53,6 @@ class Liquify::Tags
     context['page'].slug
   end
 
-  # context.registers[:request]
   url = tag 'url' do |context|
     context['page'].url
   end

@@ -71,10 +71,12 @@ module Liquify
     
     # shazam!
     def each(&block)
-      @children.each &block
+      status = dev?(@context.registers['request']) ? 'all' : 'published'
+      @children.physical.send(status).each &block
     end
 
     def before_method(name)
+      # status = (attr[:status] || ( dev?(tag.globals.page.request) ? 'all' : 'published')).downcase
       unless name == 'all'
         stat = Status[name]
         unless stat.nil?
@@ -86,6 +88,16 @@ module Liquify
         return @children.physical
       end
     end
+    
+    private
+
+      def dev?(request)
+        if dev_host = Radiant::Config['dev.host']
+          dev_host == request.host
+        else
+          request.host =~ /^dev\./
+        end
+      end
   end
 
 end
