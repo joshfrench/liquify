@@ -29,19 +29,46 @@ describe "Standard Tags" do
   end
 
   it "{% page.children %} should iterate over current page's children" do
-    pages(:home).should render('{% for page in page.children %}{% title %}{% endfor %}').as(pages(:home).children.map(&:title).join(''))
+    pages(:home).should render('{% for child in page.children %}{{ child.title }}{% endfor %}').as(pages(:home).children.map(&:title).join(''))
+    # would also work as {% for page in page.children %}{% title %}{% endfor %}
+    # because context['page'] would be overridden on each iteration
   end
 
   it "{% children %} should respect scope of {% parent %}" do
     pages(:parent).should \
-      render("{% parent %}{% for page in page.children %}{% title %}{% endfor %}{% endparent %}").
+      render("{% parent %}{% for child in page.children %}{{ child.title }}{% endfor %}{% endparent %}").
       as(pages(:home).children.collect(&:title).join(""))
+    # would also work as ...{% for page in page.children %}{% title %}{% endfor %}...
+    # (see above)
   end
 
   it "{% parent %} should respect scope of {% children %}" do
     pages(:parent).should \
       render('{% for page in page.children %}{% parent %}{% title %}{% endparent %}{% endfor %}').
       as(pages(:parent).title * pages(:parent).children.count)
+    # would also work as ...{% parent %}{{ page.title }}{% endparent %}...
+    # but at this point the local context is hard to understand
   end
+
+  it '{% if page.parent %} should render the contained block if the current page has a parent page' do
+    pages(:parent).should render('{% if page.parent %}true{% endif %}').as('true')
+    pages(:home).should render('{% if page.parent %}true{% endif %}').as('')
+  end
+
+  it '{% unless page.parent %} should render the contained block unless the current page has a parent page' do
+    pages(:home).should render('{% unless page.parent %}true{% endunless %}').as('true')
+    pages(:parent).should render('{% unless page.parent %}true{% endunless %}').as('')
+  end
+
+  it '{% if page.children any %} should render the contained block if the current page has child pages' do
+    pages(:home).should render('{% if page.children any %}true{% endif %}').as('true')
+    pages(:childless).should render('{% if page.children any %}true{% endif %}').as('')
+  end
+
+  it '{% unless page.children any %} should render the contained block if the current page has no child pages' do
+    pages(:home).should render('{% unless page.children any %}true{% endunless %}').as('')
+    pages(:childless).should render('{% unless page.children any %}true{% endunless %}').as('true')
+  end
+
 
 end

@@ -19,6 +19,7 @@ class LiquifyExtension < Radiant::Extension
   def activate
     Page.send :include, Liquify::PageExtensions
     require 'liquify/tags'
+    Liquid::Condition.operators['any'] = lambda { |c,l,r| l.any? }
   end
   
   def deactivate

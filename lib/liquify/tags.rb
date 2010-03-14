@@ -65,8 +65,4 @@ class Liquify::Tags
     end
   end
 
-  # block 'children' do |context|
-  #   context['page'].children
-  # end
-
 end

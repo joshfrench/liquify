@@ -13,5 +13,5 @@ module Liquify::Taggable
     end
     Liquid::Template.register_tag name, block
     block
-  end  
+  end
 end
