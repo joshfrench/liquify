@@ -32,11 +32,7 @@ class Liquify::Tags
   
   class CurrentTimeTag < Liquid::Tag
     def render(context)
-      if @markup.empty?
-        Time.now
-      else
-        Time.now.strftime(@markup.strip)
-      end
+      Time.now.strftime(@markup.strip)
     end
   end
   Liquid::Template.register_tag('current_time', CurrentTimeTag)
@@ -62,6 +58,10 @@ class Liquify::Tags
       context['page'] = context['page'].parent
       render_all(@nodelist, context)
     end
+  end
+
+  tag 'children' do |context|
+    context['children'] = context['page'].children
   end
 
 end

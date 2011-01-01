@@ -108,6 +108,40 @@ describe "Standard Tags" do
         as('draft a b c d e f g h i j ').on('dev.site.com')
     end
 
+    it 'should not list draft pages on dev.site.com when Radiant::Config["dev.host"] is set to something else' do
+      Radiant::Config['dev.host'] = 'preview.site.com'
+      page.should \
+        render('{% for child in page.children %}{{ child.slug }} {% endfor %}').
+        as('a b c d e f g h i j ').on('dev.site.com')
+    end
+
+    # limit & order erroring skipped, these filters are handled by Liquid
+    
+    it "should limit the number of children when given a 'limit' attribute" do
+      page.should \
+        render('{% for child in page.children limit:5 %}{{ child.slug }} {% endfor %}').
+        as('a b c d e ')
+    end
+
+    it "should limit and offset the children when given 'limit' and 'offset' attributes" do
+      page.should \
+        render("{% for child in page.children limit:5 offset:3 %}{{ child.slug }} {% endfor %}").
+        as('d e f g h ')
+    end
+
+    it "should change the sort order when reversed" do
+      page.should \
+        render("{% for child in page.children reversed %}{{ child.slug }} {% endfor %}").
+        as('j i h g f e d c b a ')
+    end
+    
+    it "should sort by a given attribute" do
+      puts "-------------------------------"
+      page.should \
+        render('{% for child in page.children %}{{ child.slug }} {% endfor | sort:"breadcrumb" %}').
+        as('f e d c b a j i h g ')
+    end
+
   end
 
   private

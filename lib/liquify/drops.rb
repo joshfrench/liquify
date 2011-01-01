@@ -76,7 +76,6 @@ module Liquify
     end
 
     def before_method(name)
-      # status = (attr[:status] || ( dev?(tag.globals.page.request) ? 'all' : 'published')).downcase
       unless name == 'all'
         stat = Status[name]
         unless stat.nil?
